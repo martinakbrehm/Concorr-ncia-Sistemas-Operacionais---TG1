@@ -170,29 +170,29 @@ int main(int argc, char *argv[]){
 	tarefa_corrente_escrita[0] = malloc(sizeof(tarefa_escrita));
 	tarefa_corrente_escrita[0] -> Posicao = 0;
 	tarefa_corrente_escrita[0] -> dados = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-	tarefa_corrente_escrita[0] -> tamanho = 64;
+	tarefa_corrente_escrita[0] -> tamanho = 40;
 
 	tarefa_corrente_escrita[1] = malloc(sizeof(tarefa_escrita));
-	tarefa_corrente_escrita[1] -> Posicao = 0;
+	tarefa_corrente_escrita[1] -> Posicao = 10;
 	tarefa_corrente_escrita[1] -> dados = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
-	tarefa_corrente_escrita[1] -> tamanho = 64;
+	tarefa_corrente_escrita[1] -> tamanho = 40;
 
 	tarefa_corrente_escrita[2] = malloc(sizeof(tarefa_escrita));
-	tarefa_corrente_escrita[2] -> Posicao = 0;
+	tarefa_corrente_escrita[2] -> Posicao = 20;
 	tarefa_corrente_escrita[2] -> dados = "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC";
-	tarefa_corrente_escrita[2] -> tamanho = 64;
+	tarefa_corrente_escrita[2] -> tamanho = 44;
 
 	tarefa_corrente_leitura[0] = malloc(sizeof(tarefa_leitura));
 	tarefa_corrente_leitura[0] -> Posicao = 0;
-	tarefa_corrente_leitura[0] -> tamanho = 64;
+	tarefa_corrente_leitura[0] -> tamanho = 40;
 
 	tarefa_corrente_leitura[1] = malloc(sizeof(tarefa_leitura));
-	tarefa_corrente_leitura[1] -> Posicao = 0;
-	tarefa_corrente_leitura[1] -> tamanho = 64;
+	tarefa_corrente_leitura[1] -> Posicao = 10;
+	tarefa_corrente_leitura[1] -> tamanho = 40;
 	
 	tarefa_corrente_leitura[2] = malloc(sizeof(tarefa_leitura));
-	tarefa_corrente_leitura[2] -> Posicao = 0;
-	tarefa_corrente_leitura[2] -> tamanho = 64;
+	tarefa_corrente_leitura[2] -> Posicao = 20;
+	tarefa_corrente_leitura[2] -> tamanho = 44;
 
 	long i;
 	for (i=0; i<N; i++)
@@ -256,3 +256,7 @@ int main(int argc, char *argv[]){
 	printf("Todas as threads foram finalizadas\n");
 	exit (0);
 }
+
+
+
+
