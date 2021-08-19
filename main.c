@@ -1,3 +1,8 @@
+// Grupo Dijkstra:
+// ** Edmilson Domingues
+// ** Gabriel Nascimento
+// ** Martina Brehm
+
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -24,9 +29,9 @@ typedef struct tarefa_leitura{
 	char memoria_total [N*K];
 	pthread_mutex_t LE[N];
 	pthread_mutex_t foto;
-	pthread_mutex_t rc[N];
-	long escritas_realizadas = 0;
-	long rcounter[N];
+	pthread_mutex_t rc[N]; // leituras simultâneas.
+	long rcounter[N]; // leituras simultâneas.
+	long escritas_realizadas = 0;  // sinaliza final das escritas, para pode gravar arquivo.
 
 void *escritor(void *arg)
 {
@@ -58,7 +63,6 @@ void *escritor(void *arg)
 		{
 			memoria_total[endereco_inicial + i]=tarefa->dados [i];
 		}
-	escritas_realizadas++;
 	pthread_mutex_unlock(&foto);
 		
 	N_da_vez = Ninicial;
@@ -90,13 +94,13 @@ void *leitor(void *arg)
 	N_da_vez = Ninicial;
 	for (i=0; i < delta; i++)
 		{
-			pthread_mutex_lock(&rc[N_da_vez]);
-			rcounter[N_da_vez]++;
-			if (rcounter[N_da_vez] == 1)
+			pthread_mutex_lock(&rc[N_da_vez]); // leituras simultâneas.
+			rcounter[N_da_vez]++; // leituras simultâneas.
+			if (rcounter[N_da_vez] == 1) // leituras simultâneas.
 			{
 			pthread_mutex_lock(&LE[N_da_vez]);
 			}
-			pthread_mutex_unlock(&rc[N_da_vez]);
+			pthread_mutex_unlock(&rc[N_da_vez]); // leituras simultâneas.
 			N_da_vez++;
 		}
 
@@ -111,13 +115,13 @@ void *leitor(void *arg)
 	N_da_vez = Ninicial;
 	for (i=0; i < delta; i++)
 		{
-			pthread_mutex_lock(&rc[N_da_vez]);
-			rcounter[N_da_vez]--;
-			if (rcounter[N_da_vez] == 0)
+			pthread_mutex_lock(&rc[N_da_vez]); // leituras simultâneas.
+			rcounter[N_da_vez]--; // leituras simultâneas.
+			if (rcounter[N_da_vez] == 0) // leituras simultâneas.
 			{
 				pthread_mutex_unlock(&LE[N_da_vez]);		
 			}
-			pthread_mutex_unlock(&rc[N_da_vez]);
+			pthread_mutex_unlock(&rc[N_da_vez]); // leituras simultâneas.
 			N_da_vez++;
 			
 		}
@@ -129,7 +133,6 @@ void *logmemoria(void *arg)
 	long i;
 	FILE *pont_arq; // cria ponteiro para o arquivo
 	char espelho_memoria_total[N*K];
-	long sinc = 0; 
   
 	pont_arq = fopen("./sisop.txt", "w");
 	if(pont_arq == NULL)
@@ -139,9 +142,6 @@ void *logmemoria(void *arg)
 
 	while(1)
 	{		
-			if (escritas_realizadas > sinc)
-			{
-				sinc = escritas_realizadas;
 				pthread_mutex_lock(&foto);
 				for (i=0; i<N*K; i++)
 					{
@@ -151,11 +151,10 @@ void *logmemoria(void *arg)
 				
 				fprintf(pont_arq, &espelho_memoria_total[endereco_inicial]);
 				fprintf(pont_arq,"\n");
-				if (sinc == 999999)
+				if (escritas_realizadas == 999999)
 				{
 					break;
 				}
-			}
 	}
 			fclose(pont_arq);
  			printf("\nDados gravados com sucesso!\n");
@@ -171,29 +170,29 @@ int main(int argc, char *argv[]){
 	tarefa_corrente_escrita[0] = malloc(sizeof(tarefa_escrita));
 	tarefa_corrente_escrita[0] -> Posicao = 0;
 	tarefa_corrente_escrita[0] -> dados = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-	tarefa_corrente_escrita[0] -> tamanho = 40;
+	tarefa_corrente_escrita[0] -> tamanho = 64;
 
 	tarefa_corrente_escrita[1] = malloc(sizeof(tarefa_escrita));
-	tarefa_corrente_escrita[1] -> Posicao = 10;
+	tarefa_corrente_escrita[1] -> Posicao = 0;
 	tarefa_corrente_escrita[1] -> dados = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
-	tarefa_corrente_escrita[1] -> tamanho = 40;
+	tarefa_corrente_escrita[1] -> tamanho = 64;
 
 	tarefa_corrente_escrita[2] = malloc(sizeof(tarefa_escrita));
-	tarefa_corrente_escrita[2] -> Posicao = 20;
+	tarefa_corrente_escrita[2] -> Posicao = 0;
 	tarefa_corrente_escrita[2] -> dados = "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC";
-	tarefa_corrente_escrita[2] -> tamanho = 44;
+	tarefa_corrente_escrita[2] -> tamanho = 64;
 
 	tarefa_corrente_leitura[0] = malloc(sizeof(tarefa_leitura));
 	tarefa_corrente_leitura[0] -> Posicao = 0;
-	tarefa_corrente_leitura[0] -> tamanho = 40;
+	tarefa_corrente_leitura[0] -> tamanho = 64;
 
 	tarefa_corrente_leitura[1] = malloc(sizeof(tarefa_leitura));
-	tarefa_corrente_leitura[1] -> Posicao = 10;
-	tarefa_corrente_leitura[1] -> tamanho = 40;
+	tarefa_corrente_leitura[1] -> Posicao = 0;
+	tarefa_corrente_leitura[1] -> tamanho = 64;
 	
 	tarefa_corrente_leitura[2] = malloc(sizeof(tarefa_leitura));
-	tarefa_corrente_leitura[2] -> Posicao = 20;
-	tarefa_corrente_leitura[2] -> tamanho = 44;
+	tarefa_corrente_leitura[2] -> Posicao = 0;
+	tarefa_corrente_leitura[2] -> tamanho = 64;
 
 	long i;
 	for (i=0; i<N; i++)
